@@ -1,17 +1,18 @@
 import csv
 import sys
 import trace_logic
+import evaluation_logic
 
 import os
 
 
 def write_output_file(trace):
     '''
-    Writes a dummy output file using the python csv writer, update this 
-    to accept as parameter the found trace links. 
+    Writes a dummy output file using the python csv writer, update this
+    to accept as parameter the found trace links.
     '''
     # ADD \ up-front
-    with open('output/links.csv', 'w') as csvfile:
+    with open('output/links.csv', 'w', newline='') as csvfile:
 
         writer = csv.writer(csvfile, delimiter=",",
                             quotechar="\"", quoting=csv.QUOTE_MINIMAL)
@@ -23,9 +24,6 @@ def write_output_file(trace):
         for highReq in trace:
             lowReq = ','.join(highReq[1])
             writer.writerow([highReq[0], lowReq])
-
-            #writer.writerow(["UC1", "L1, L34, L5"])
-            #riter.writerow(["UC2", "L5, L4"])
 
 
 if __name__ == "__main__":
@@ -55,12 +53,14 @@ if __name__ == "__main__":
             f"There are {len(inputfile.readlines()) - 1} low-level requirements")
 
     '''
-    This is where you should implement the trace level logic as discussed in the 
+    This is where you should implement the trace level logic as discussed in the
     assignment on Canvas. Please ensure that you take care to deliver clean,
     modular, and well-commented code.
     '''
-    trace = trace_logic.getTrace(match_type)
+    requirements = trace_logic.getTrace(match_type)
 
-    write_output_file(trace)
+    write_output_file(requirements.similarityMatrix)
+
+    evaluation_logic.getEvaluation(requirements)
 
     print("Output written")

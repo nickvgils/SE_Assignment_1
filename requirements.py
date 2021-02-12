@@ -7,13 +7,16 @@ nltk.download('stopwords')
 
 
 class Requirements:
-    def __init__(self, path):
-        self.requirements = []
-        self.vocabulary = []
-        self.getCSV(path)
+    def __init__(self):
+        self.masterVocabulary = []
+        self.highRequirements = self.getCSV("high")
+        self.lowRequirements = self.getCSV("low")
+        self.similarityMatrix = []
 
     def getCSV(self, requirement):
+        requirements = []
 
+        # Open csv file and loop through rows
         filename = "input/" + requirement + ".csv"
 
         with open(filename, "r") as inputfile:
@@ -21,21 +24,26 @@ class Requirements:
             for row in csv_dict_reader:
                 print(row['id'], row['text'])
 
+                # Tokenization
                 tokenizedSentence = nltk.word_tokenize(row['text'])
 
+                # Stop-words removal and Stemming
                 ps = nltk.PorterStemmer()
-
                 filtered_words = [
                     ps.stem(word) for word in tokenizedSentence if word not in nltk.corpus.stopwords.words('english')]
 
-                self.vocabulary += filtered_words
+                # Construct vocabulary of csv file
+                self.masterVocabulary += filtered_words
 
-                # row variable is a list that represents a row in csv
-                self.requirements.append(
+                # Store the id and filtered_words in 'requirements' array
+                requirements.append(
                     Requirement(row['id'], filtered_words))
+
+        return requirements
 
 
 class Requirement:
-    def __init__(self, id, text):
+    def __init__(self, id, tokens):
         self.id = id
-        self.text = text
+        self.tokens = tokens
+        self.vectorRepr = []
